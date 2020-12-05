@@ -1,0 +1,22 @@
+<confirmed-RequestPDU>
+<element>7</element>
+<invokeID>2676121</invokeID>
+<ConfirmedServiceRequest>
+<read specificationWithResult="false">
+<variableAccessSpecification>
+<listOfVariable>
+<SEQUENCE>
+<variableSpecification>
+<name>
+<domain-specific>
+<domainId>IEDNameLDINst</domainId>
+<itemId>LLN0$ST$Beh$stVal</itemId>
+</domain-specific>
+</name>
+</variableSpecification>
+</SEQUENCE>
+</listOfVariable>
+</variableAccessSpecification>
+</read>
+</ConfirmedServiceRequest>
+</confirmed-RequestPDU>
