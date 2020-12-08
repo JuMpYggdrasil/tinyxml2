@@ -17,7 +17,7 @@ void setup() {
         return;
     };
 
-    XMLNode* root = xmlDocument.FirstChild();
+    XMLElement* root = xmlDocument.RootElement();//confirmed-RequestPDU
     XMLElement* element = root->FirstChildElement("element");
 
     //int val;
@@ -50,6 +50,7 @@ void loop() {
     XMLElement* itemIdElement = domain_specific->FirstChildElement("itemId");
     const char* itemId = itemIdElement->GetText();
     Serial.println(itemId);
+    
 
     Serial.println();
     delay(1000);
