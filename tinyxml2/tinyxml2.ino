@@ -50,7 +50,9 @@ void loop() {
     XMLElement* itemIdElement = domain_specific->FirstChildElement("itemId");
     const char* itemId = itemIdElement->GetText();
     Serial.println(itemId);
-    
+
+    const char* all = root->GetText();
+    Serial.println(all);
 
     Serial.println();
     delay(1000);
