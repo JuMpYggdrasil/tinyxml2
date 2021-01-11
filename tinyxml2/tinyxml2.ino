@@ -28,7 +28,10 @@ XMLDocument doc;
 //String testDocument = "<confirmed-RequestPDU><!-- this is comment 1 --><element>7</element><invokeID>2676121</invokeID><!-- this is comment 2 --><ConfirmedServiceRequest><read specificationWithResult=\"false\"><variableAccessSpecification><listOfVariable><SEQUENCE><variableSpecification><name><domain-specific><domainId>IEDNameLDINst</domainId><itemId>LLN0$ST$Beh$stVal</itemId></domain-specific></name></variableSpecification></SEQUENCE></listOfVariable></variableAccessSpecification></read></ConfirmedServiceRequest></confirmed-RequestPDU>";
 
 //write
-String testDocument = "<confirmed-RequestPDU><!-- this is comment 1 --><element>7</element><invokeID>2676121</invokeID><!-- this is comment 2 --><ConfirmedServiceRequest><write><variableAccessSpecification><listOfVariable><SEQUENCE><variableSpecification><name><domain-specific><domainId>IEDNameLDINst</domainId><itemId>LLN0$ST$Beh$stVal</itemId></domain-specific></name></variableSpecification></SEQUENCE></listOfVariable></variableAccessSpecification><listOfData><Data><integer>1</integer></Data></listOfData></write></ConfirmedServiceRequest></confirmed-RequestPDU>";
+//String testDocument = "<confirmed-RequestPDU><!-- this is comment 1 --><element>7</element><invokeID>2676121</invokeID><!-- this is comment 2 --><ConfirmedServiceRequest><write><variableAccessSpecification><listOfVariable><SEQUENCE><variableSpecification><name><domain-specific><domainId>IEDNameLDINst</domainId><itemId>LLN0$ST$Beh$stVal</itemId></domain-specific></name></variableSpecification></SEQUENCE></listOfVariable></variableAccessSpecification><listOfData><Data><integer>1</integer></Data></listOfData></write></ConfirmedServiceRequest></confirmed-RequestPDU>";
+String testDocument = "<iq type=\"get\" id=\"444555\" to=\"esp@xmpp.egat.co.th/8n1x08ixsd\" from=\"vscode@xmpp.egat.co.th/61850Client\"><query xmlns=\"jabber:iq:iq\"><confirmed-RequestPDU><invokeID>1234588</invokeID><ConfirmedServiceRequest><read specificationWithResult=\"false\"><variableAccessSpecification><listOfVariable><SEQUENCE><variableSpecification><name><domain-specific><domainId>IEDNameLDINst</domainId><itemId>LLN0$ST$Beh$stVal</itemId></domain-specific></name></variableSpecification></SEQUENCE></listOfVariable></variableAccessSpecification></read></ConfirmedServiceRequest></confirmed-RequestPDU></query></iq>";
+
+
 
 int val;
 
@@ -113,77 +116,119 @@ void loop() {
 }
 
 void eventProcess1() {
-    boolean attribute;
+    boolean attributeBool;
+    const char* attributeString;
+    uint32_t  attributeUint32;
     unsigned long n1Time = millis();
 
-    XMLElement* root = xmlDocument.RootElement();//confirmed-RequestPDU
+    XMLElement* root = xmlDocument.RootElement();
     if (NULL != root) {
+        const char* rootName = root->Name();
 
-        XMLElement* readWriteElement = root->FirstChildElement("ConfirmedServiceRequest")->FirstChildElement();
-        if (NULL != readWriteElement) {
-            const char* strTagName = readWriteElement->Name();
+        if (strcmp(rootName, "iq") == 0) {//iq query confirmed-RequestPDU
 
-            if (strcmp(strTagName, "read") == 0) {
-                XMLElement* domain_specific = readWriteElement->FirstChildElement("variableAccessSpecification")->FirstChildElement("listOfVariable")->FirstChildElement("SEQUENCE")->FirstChildElement("variableSpecification")->FirstChildElement("name")->FirstChildElement("domain-specific");
-                if (NULL != domain_specific) {
-                    XMLElement* domainIdElement = domain_specific->FirstChildElement("domainId");
-                    if (NULL != domainIdElement) {
-                        const char* domainId = domainIdElement->GetText();
-                        DomainId = String(domainId);
-                        Serial.println(DomainId);
-                    }
-
-                    XMLElement* itemIdElement = domain_specific->FirstChildElement("itemId");
-                    if (NULL != itemIdElement) {
-                        const char* itemId = itemIdElement->GetText();
-                        ItemId = String(itemId);
-                        Serial.println(ItemId);
-                    }
-                }
-
-                if (readWriteElement->QueryBoolAttribute("specificationWithResult", &attribute) != XML_SUCCESS) {
-                    Serial.println("Could not obtain the attribute");
-                    return;
-                };
-                Serial.print("attr: ");
-                Serial.println(attribute);
-
-            } else if (strcmp(strTagName, "write") == 0) {
-                XMLElement* domain_specific = readWriteElement->FirstChildElement("variableAccessSpecification")->FirstChildElement("listOfVariable")->FirstChildElement("SEQUENCE")->FirstChildElement("variableSpecification")->FirstChildElement("name")->FirstChildElement("domain-specific");
-                if (NULL != domain_specific) {
-                    XMLElement* domainIdElement = domain_specific->FirstChildElement("domainId");
-                    if (NULL != domainIdElement) {
-                        const char* domainId = domainIdElement->GetText();
-                        DomainId = String(domainId);
-                        Serial.println(DomainId);
-                    }
-
-                    XMLElement* itemIdElement = domain_specific->FirstChildElement("itemId");
-                    if (NULL != itemIdElement) {
-                        const char* itemId = itemIdElement->GetText();
-                        ItemId = String(itemId);
-                        Serial.println(ItemId);
-                    }
-                }
-
-                XMLElement* integerElement = readWriteElement->FirstChildElement("listOfData")->FirstChildElement("Data")->FirstChildElement("integer");
-                if (NULL != integerElement) {
-                    const char* dataInteger = integerElement->GetText();
-                    DataInteger = String(dataInteger);
-                    Serial.println(DataInteger);
-                }
-
+            if (root->QueryStringAttribute("type", &attributeString) != XML_SUCCESS) {
+                Serial.println("Could not obtain the attribute");
             } else {
-                Serial.println("unknown function");
+                Serial.print("type: ");
+                Serial.println(attributeString);
+            }
+
+            if (root->QueryUnsignedAttribute("id", &attributeUint32) != XML_SUCCESS) {
+                Serial.println("Could not obtain the attribute");
+            } else {
+                Serial.print("id: ");
+                Serial.println(attributeUint32);
+            }
+
+            
+
+            if (root->QueryStringAttribute("to", &attributeString) != XML_SUCCESS) {
+                Serial.println("Could not obtain the attribute");
+            } else {
+                Serial.print("to: ");
+                Serial.println(attributeString);
+            }
+
+            if (root->QueryStringAttribute("from", &attributeString) != XML_SUCCESS) {
+                Serial.println("Could not obtain the attribute");
+            } else {
+                Serial.print("from: ");
+                Serial.println(attributeString);
+            }
+
+            XMLElement* readWriteElement = root->FirstChildElement("query")->FirstChildElement("confirmed-RequestPDU")->FirstChildElement("ConfirmedServiceRequest")->FirstChildElement();
+            if (NULL != readWriteElement) {
+                const char* strTagName = readWriteElement->Name();
+
+                if (strcmp(strTagName, "read") == 0) {
+                    XMLElement* domain_specific = readWriteElement->FirstChildElement("variableAccessSpecification")->FirstChildElement("listOfVariable")->FirstChildElement("SEQUENCE")->FirstChildElement("variableSpecification")->FirstChildElement("name")->FirstChildElement("domain-specific");
+                    if (NULL != domain_specific) {
+                        XMLElement* domainIdElement = domain_specific->FirstChildElement("domainId");
+                        if (NULL != domainIdElement) {
+                            const char* domainId = domainIdElement->GetText();
+                            DomainId = String(domainId);
+                            Serial.println(DomainId);
+                        }
+
+                        XMLElement* itemIdElement = domain_specific->FirstChildElement("itemId");
+                        if (NULL != itemIdElement) {
+                            const char* itemId = itemIdElement->GetText();
+                            ItemId = String(itemId);
+                            Serial.println(ItemId);
+                        }
+                    }
+
+                    if (readWriteElement->QueryBoolAttribute("specificationWithResult", &attributeBool) != XML_SUCCESS) {
+                        Serial.println("Could not obtain the attribute");
+                    } else {
+                        Serial.print("attr: ");
+                        Serial.println(attributeBool);
+                    }
+
+                } else if (strcmp(strTagName, "write") == 0) {
+                    XMLElement* domain_specific = readWriteElement->FirstChildElement("variableAccessSpecification")->FirstChildElement("listOfVariable")->FirstChildElement("SEQUENCE")->FirstChildElement("variableSpecification")->FirstChildElement("name")->FirstChildElement("domain-specific");
+                    if (NULL != domain_specific) {
+                        XMLElement* domainIdElement = domain_specific->FirstChildElement("domainId");
+                        if (NULL != domainIdElement) {
+                            const char* domainId = domainIdElement->GetText();
+                            DomainId = String(domainId);
+                            Serial.println(DomainId);
+                        }
+
+                        XMLElement* itemIdElement = domain_specific->FirstChildElement("itemId");
+                        if (NULL != itemIdElement) {
+                            const char* itemId = itemIdElement->GetText();
+                            ItemId = String(itemId);
+                            Serial.println(ItemId);
+                        }
+                    }
+
+                    XMLElement* integerElement = readWriteElement->FirstChildElement("listOfData")->FirstChildElement("Data")->FirstChildElement("integer");
+                    if (NULL != integerElement) {
+                        const char* dataInteger = integerElement->GetText();
+                        DataInteger = String(dataInteger);
+                        Serial.println(DataInteger);
+                    }
+
+                } else {
+                    Serial.println("unknown function");
+                }
+
+
+                XMLElement* invokeIdElement = root->FirstChildElement("query")->FirstChildElement("confirmed-RequestPDU")->FirstChildElement("invokeID");
+                if (NULL != invokeIdElement) {
+                    const char* invokeID = invokeIdElement->GetText();
+                    InvokeID = String(invokeID);
+                    Serial.println(InvokeID);
+                } else {
+                    Serial.println(F("query not found"));
+                }
             }
 
 
-            XMLElement* invokeIdElement = root->FirstChildElement("invokeID");
-            if (NULL != invokeIdElement) {
-                const char* invokeID = invokeIdElement->GetText();
-                InvokeID = String(invokeID);
-                Serial.println(InvokeID);
-            }
+        } else { //not iq
+
         }
     }
 
