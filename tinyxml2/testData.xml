@@ -1,0 +1,25 @@
+<iq type="get" id="444555" to="esp@xmpp.egat.co.th/8n1x08ixsd" from="vscode@xmpp.egat.co.th/61850Client">
+   <query xmlns="jabber:iq:iq">
+      <confirmed-RequestPDU>
+         <invokeID>1234588</invokeID>
+         <ConfirmedServiceRequest>
+            <read specificationWithResult="false">
+               <variableAccessSpecification>
+                  <listOfVariable>
+                     <SEQUENCE>
+                        <variableSpecification>
+                           <name>
+                              <domain-specific>
+                                 <domainId>IEDNameLDINst</domainId>
+                                 <itemId>LLN0$ST$Beh$stVal</itemId>
+                              </domain-specific>
+                           </name>
+                        </variableSpecification>
+                     </SEQUENCE>
+                  </listOfVariable>
+               </variableAccessSpecification>
+            </read>
+         </ConfirmedServiceRequest>
+      </confirmed-RequestPDU>
+   </query>
+</iq>
