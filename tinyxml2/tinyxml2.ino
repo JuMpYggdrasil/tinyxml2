@@ -125,7 +125,7 @@ void eventProcess1() {
     if (NULL != root) {
         const char* rootName = root->Name();
 
-        if (strcmp(rootName, "iq") == 0) {//iq query confirmed-RequestPDU
+        if (strcmp(rootName, "iq") == 0) {//iq
 
             if (root->QueryStringAttribute("type", &attributeString) != XML_SUCCESS) {
                 Serial.println("Could not obtain the attribute");
@@ -141,8 +141,6 @@ void eventProcess1() {
                 Serial.println(attributeUint32);
             }
 
-            
-
             if (root->QueryStringAttribute("to", &attributeString) != XML_SUCCESS) {
                 Serial.println("Could not obtain the attribute");
             } else {
@@ -157,7 +155,16 @@ void eventProcess1() {
                 Serial.println(attributeString);
             }
 
-            XMLElement* readWriteElement = root->FirstChildElement("query")->FirstChildElement("confirmed-RequestPDU")->FirstChildElement("ConfirmedServiceRequest")->FirstChildElement();
+            XMLElement* queryElement = root->FirstChildElement("query");//may or may not
+            XMLElement* readWriteElement = xmlDocument.RootElement();
+            if (NULL != readWriteElement) {
+                readWriteElement = queryElement->FirstChildElement("confirmed-RequestPDU")->FirstChildElement("ConfirmedServiceRequest")->FirstChildElement();
+            } else {
+                readWriteElement = root->FirstChildElement("confirmed-RequestPDU")->FirstChildElement("ConfirmedServiceRequest")->FirstChildElement();
+            }
+
+
+            //XMLElement* readWriteElement = root->FirstChildElement("query")->FirstChildElement("confirmed-RequestPDU")->FirstChildElement("ConfirmedServiceRequest")->FirstChildElement();
             if (NULL != readWriteElement) {
                 const char* strTagName = readWriteElement->Name();
 
@@ -210,11 +217,9 @@ void eventProcess1() {
                         DataInteger = String(dataInteger);
                         Serial.println(DataInteger);
                     }
-
                 } else {
                     Serial.println("unknown function");
                 }
-
 
                 XMLElement* invokeIdElement = root->FirstChildElement("query")->FirstChildElement("confirmed-RequestPDU")->FirstChildElement("invokeID");
                 if (NULL != invokeIdElement) {
@@ -225,13 +230,14 @@ void eventProcess1() {
                     Serial.println(F("query not found"));
                 }
             }
-
-
-        } else { //not iq
-
+        } else if (strcmp(rootName, "presence") == 0) {
+            Serial.println(F("get presence"));
+        } else if (strcmp(rootName, "message") == 0) {
+            Serial.println(F("get message"));
+        } else { //not standard stanza
+            Serial.println(F("not standard stanza"));
         }
     }
-
 
     Serial.println();
 
@@ -275,7 +281,6 @@ void eventProcess2() {
         n3Element->InsertEndChild(n4Element);
         n4Element->InsertEndChild(n5Element);
         n5Element->InsertEndChild(n6Element);
-
 
         doc.InsertFirstChild(pRoot);
     }
